@@ -18,10 +18,6 @@ import (
 	"github.com/kidoman/embd"
 )
 
-// # Display resolution
-var EPD_WIDTH uint8 = 200
-var EPD_HEIGHT uint8 = 200
-
 var EPD_FONT *truetype.Font
 
 // # EPD1IN54 commands
@@ -58,6 +54,8 @@ type EPD struct {
 	lutFullUpdate    []byte
 	lutPartialUpdate []byte
 	screen           int
+	height           uint8
+	width            uint8
 }
 
 func (e *EPD) SetDefaults() {
@@ -91,10 +89,13 @@ func (e *EPD) CallFunction(command byte, data ...byte) {
 	e.SendData(data...)
 }
 
-func (e *EPD) Init(full bool) {
+func (e *EPD) Init(full bool, height, width uint8) {
 	if len(e.lutFullUpdate) == 0 || len(e.lutPartialUpdate) == 0 {
 		e.SetDefaults()
 	}
+
+	e.width = width
+	e.height = height
 
 	var dataseq []byte
 	e.lutFull = full
@@ -105,7 +106,7 @@ func (e *EPD) Init(full bool) {
 	// self.send_data((EPD_HEIGHT - 1) & 0xFF)
 	// self.send_data(((EPD_HEIGHT - 1) >> 8) & 0xFF)
 	// self.send_data(0x00)                     # GD = 0 SM = 0 TB = 0
-	dataseq = []byte{(EPD_HEIGHT - 1) & 0xFF, ((EPD_HEIGHT - 1) >> 8) & 0xFF, 0x00}
+	dataseq = []byte{(e.height - 1) & 0xFF, ((e.width - 1) >> 8) & 0xFF, 0x00}
 	e.CallFunction(DRIVER_OUTPUT_CONTROL, dataseq...)
 
 	// self.send_command(BOOSTER_SOFT_START_CONTROL)
@@ -384,7 +385,7 @@ func (e *EPD) SetFrame(byteimg image.Gray) {
 	// 	y1 = EPD_HEIGHT - 1
 	// }
 
-	e.setMemArea(0, 0, 200, 200)
+	e.setMemArea(0, 0, e.width, e.height)
 
 	// # send the image data
 
@@ -394,7 +395,7 @@ func (e *EPD) SetFrame(byteimg image.Gray) {
 	e.SetXY(0, byte(0))
 
 	//	e.SendCommand(WRITE_RAM)
-	for row := 0; row < 200; row++ {
+	for row := 0; row < int(e.height); row++ {
 		bytearray := make([]byte, 25)
 		for col := 0; col < 25; col++ {
 			pixel := byteimg.GrayAt(col, row).Y

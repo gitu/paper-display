@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/wiless/waveshare"
+	"github.com/gitu/paper-display/ws"
 	"net/http"
 	"fmt"
 	"golang.org/x/image/bmp"
@@ -11,7 +11,7 @@ var epd ws.EPD
 
 func main() {
 	ws.InitHW()
-	epd.Init(true)
+	epd.Init(true, 384, 640)
 
 	url := "https://paper-display.herokuapp.com/clock"
 	response, err := http.Get(url)
