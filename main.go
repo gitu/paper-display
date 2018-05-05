@@ -28,5 +28,5 @@ func main() {
 	}
 
 	gray := ws.ConvertToGray(image)
-	ws.AsciiPrintByteImage("clock", *gray)
+	epd.SetFrame(*gray)
 }
