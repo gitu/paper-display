@@ -10,6 +10,7 @@ import (
 func main() {
 	epd.InitHW()
 	display := epd.Epd75b()
+	display.Init(display)
 
 	url := "https://paper-display.herokuapp.com/clock"
 	response, err := http.Get(url)
