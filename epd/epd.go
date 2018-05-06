@@ -4,6 +4,8 @@ import (
 	"github.com/kidoman/embd"
 	"time"
 	"log"
+	"image"
+	"errors"
 )
 
 type Command int
@@ -91,63 +93,40 @@ func (e *Display) Reset() {
 	time.Sleep(200 * time.Millisecond)
 }
 
-/*
+func (e *Display) DisplayImage(img image.Image) error {
+	if img.Bounds().Dx() != e.Width {
+		return errors.New("Height doesn't match " + string(img.Bounds().Dx()) + " expected: " + string(e.Width))
+	}
+	if img.Bounds().Dy() != e.Height {
+		return errors.New("Height doesn't match " + string(img.Bounds().Dy()) + " expected: " + string(e.Height))
+	}
+	e.SendCommand(DATA_START_TRANSMISSION_1)
 
-def get_frame_buffer(self, image):
-buf = [0xFF] * (self.width * self.height / 8)
-# Set buffer to value of Python Imaging Library image.
-# Image must be in mode L.
-image_grayscale = image.convert('1')
-imwidth, imheight = image_grayscale.size
-if imwidth != self.width or imheight != self.height:
-raise ValueError('Image must be same dimensions as display \
-({0}x{1}).' .format(self.width, self.height))
+	val := make([]byte, e.Width*e.Height/2)
+	i := 0
+	for x := 0; x < e.Width; x++ {
+		for y := 0; y < e.Height; y++ {
+			at := img.At(x, y)
+			newVal := byte(0x00)
+			r, g, b, _ := at.RGBA()
+			if r > 100 && b > 100 && g > 100 {
+				newVal = 0x03
+			}
+			if r > 100 && b < 100 {
+				newVal = 0x04
+			}
 
-pixels = image_grayscale.load()
-for y in range (self.height):
-for x in range (self.width):
-# Set the bits for the column of pixels at the current position.
-if pixels[x, y] == 0:
-buf[(x + y * self.width) / 8] &= ~(0x80 >> (x % 8))
-return buf
-
-def display_frame(self, frame_buffer_black, frame_buffer_red):
-self.send_command(DATA_START_TRANSMISSION_1)
-for i in range (0, self.width / 8 * self.height):
-temp1 = frame_buffer_black[i]
-temp2 = frame_buffer_red[i]
-j = 0
-while (j < 8):
-if ((temp2 & 0x80) == 0x00):
-temp3 = 0x04                #red
-elif ((temp1 & 0x80) == 0x00):
-temp3 = 0x00                #black
-else:
-temp3 = 0x03                #white
-
-temp3 = (temp3 << 4) & 0xFF
-temp1 = (temp1 << 1) & 0xFF
-temp2 = (temp2 << 1) & 0xFF
-j += 1
-if ((temp2 & 0x80) == 0x00):
-temp3 |= 0x04              #red
-elif ((temp1 & 0x80) == 0x00):
-temp3 |= 0x00              #black else:
-temp3 |= 0x03              #white
-temp1 = (temp1 << 1) & 0xFF
-temp2 = (temp2 << 1) & 0xFF
-self.send_data(temp3)
-j += 1
-self.send_command(DISPLAY_REFRESH)
-self.delay_ms(100)
-self.wait_until_idle()
-
-def sleep(self):
-self.send_command(POWER_OFF)
-self.wait_until_idle()
-self.send_command(DEEP_SLEEP)
-self.send_data(0xa5)
-
-### END OF FILE ###
-
-*/
+			if i%2 == 0 {
+				val[i/2] = (newVal << 4) & 0xFF
+			} else {
+				val[i/2] = val[i/2] | newVal
+			}
+			i++
+		}
+	}
+	e.SendData(val...)
+	e.SendCommand(DISPLAY_REFRESH)
+	time.Sleep(100 * time.Millisecond)
+	e.Wait()
+	return nil
+}

@@ -1,17 +1,15 @@
 package main
 
 import (
-	"github.com/gitu/paper-display/ws"
 	"net/http"
 	"fmt"
 	"golang.org/x/image/bmp"
+	"github.com/gitu/paper-display/epd"
 )
 
-var epd ws.EPD
-
 func main() {
-	ws.InitHW()
-	epd.Init(true, 384, 640)
+	epd.InitHW()
+	display := epd.Epd75b()
 
 	url := "https://paper-display.herokuapp.com/clock"
 	response, err := http.Get(url)
@@ -27,6 +25,5 @@ func main() {
 		return
 	}
 
-	gray := ws.ConvertToGray(image)
-	epd.SetFrame(*gray)
+	display.DisplayImage(image)
 }

@@ -1,6 +1,6 @@
 package epd
 
-var Epd75b = &Display{
+var epd75b = &Display{
 	Width:  640,
 	Height: 384,
 	Commands: map[Command]byte{
@@ -58,4 +58,8 @@ var Epd75b = &Display{
 		e.CallFunction(VCM_DC_SETTING, 0x1E)
 		e.CallFunction(FLASH_MODE, 0x03)
 	},
+}
+
+func Epd75b() (*Display) {
+	return epd75b
 }
