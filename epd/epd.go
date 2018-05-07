@@ -6,6 +6,7 @@ import (
 	"log"
 	"image"
 	"errors"
+	"encoding/hex"
 )
 
 type Command int
@@ -107,14 +108,15 @@ func (e *Display) DisplayImage(img image.Image) error {
 	for y := 0; y < e.Height; y++ {
 		for x := 0; x < e.Width; x++ {
 			at := img.At(x, y)
-			newVal := byte(0x00)
+			newVal := byte(0x00) // black
 			r, g, b, _ := at.RGBA()
 			if r > 15000 && b > 15000 && g > 15000 {
-				newVal = 0x03
+				newVal = 0x03 // white
 			}
 			if r > 15000 && b < 15000 {
-				newVal = 0x04
+				newVal = 0x04 // red
 			}
+			newVal = 0x04 // all should be red...
 
 			if i%2 == 0 {
 				val[i/2] = newVal << 4
@@ -125,6 +127,7 @@ func (e *Display) DisplayImage(img image.Image) error {
 			i++
 		}
 	}
+	log.Println(hex.Dump(val))
 	e.SendData(val...)
 	e.SendCommand(DISPLAY_REFRESH)
 	time.Sleep(100 * time.Millisecond)
