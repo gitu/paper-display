@@ -17,3 +17,14 @@ source ~/.bashrc
 ```
 go version
 ```
+
+
+
+## Install Paper Display
+```
+go get -u github.com/gitu/paper-display
+sudo ln -s /home/pi/go/src/github.com/gitu/paper-display/paper-display.service /lib/systemd/system/paper-display.service
+sudo systemctl daemon-reload
+sudo systemctl enable paper-display.service
+```
+
