@@ -104,8 +104,8 @@ func (e *Display) DisplayImage(img image.Image) error {
 
 	val := make([]byte, e.Width*e.Height/2)
 	i := 0
-	for x := 0; x < e.Width; x++ {
-		for y := 0; y < e.Height; y++ {
+	for y := 0; y < e.Height; y++ {
+		for x := 0; x < e.Width; x++ {
 			at := img.At(x, y)
 			newVal := byte(0x00)
 			r, g, b, _ := at.RGBA()
