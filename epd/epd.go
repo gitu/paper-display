@@ -122,13 +122,13 @@ func (e *Display) DisplayImage(img image.Image) error {
 				val[i/2] = newVal << 4
 			} else {
 				val[i/2] = val[i/2] | newVal
+				e.SendData(val[i/2])
 			}
-			//e.SendData(val[i/2])
 			i++
 		}
 	}
 	log.Println(hex.Dump(val))
-	e.SendData(val...)
+	//e.SendData(val...)
 	e.SendCommand(DISPLAY_REFRESH)
 	time.Sleep(100 * time.Millisecond)
 	e.Wait()
