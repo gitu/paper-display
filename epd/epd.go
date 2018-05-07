@@ -102,7 +102,7 @@ func (e *Display) DisplayImage(img image.Image) error {
 	}
 	e.SendCommand(DATA_START_TRANSMISSION_1)
 
-	val := make([]byte, e.Width*e.Height/2)
+	val := make([]byte, e.Width*e.Height/4)
 	i := 0
 	for y := 0; y < e.Height; y++ {
 		for x := 0; x < e.Width; x++ {
@@ -116,15 +116,20 @@ func (e *Display) DisplayImage(img image.Image) error {
 				newVal = 0x04
 			}
 
-			if i%2 == 0 {
-				val[i/2] = (newVal << 4) & 0xFF
+			if i%4 == 0 {
+				val[i/4] = newVal << 4
+			} else if i%4 == 1 {
+				val[i/4] = newVal << 3
+			} else if i%4 == 2 {
+				val[i/4] = newVal << 2
 			} else {
-				val[i/2] = val[i/2] | newVal
+				val[i/4] = val[i/4] | newVal
 			}
-			e.SendData(val[i/2])
+			e.SendData(val[i/4])
 			i++
 		}
 	}
+	//log.Println(hex.Dump(val))
 	e.SendCommand(DISPLAY_REFRESH)
 	time.Sleep(100 * time.Millisecond)
 	e.Wait()
