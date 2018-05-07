@@ -109,10 +109,10 @@ func (e *Display) DisplayImage(img image.Image) error {
 			at := img.At(x, y)
 			newVal := byte(0x00)
 			r, g, b, _ := at.RGBA()
-			if r > 100 && b > 100 && g > 100 {
+			if r > 15000 && b > 15000 && g > 15000 {
 				newVal = 0x03
 			}
-			if r > 100 && b < 100 {
+			if r > 15000 && b < 15000 {
 				newVal = 0x04
 			}
 
@@ -121,10 +121,10 @@ func (e *Display) DisplayImage(img image.Image) error {
 			} else {
 				val[i/2] = val[i/2] | newVal
 			}
+			e.SendData(val[i/2])
 			i++
 		}
 	}
-	e.SendData(val...)
 	e.SendCommand(DISPLAY_REFRESH)
 	time.Sleep(100 * time.Millisecond)
 	e.Wait()
