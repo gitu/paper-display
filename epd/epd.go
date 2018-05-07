@@ -116,7 +116,6 @@ func (e *Display) DisplayImage(img image.Image) error {
 			if r > 15000 && b < 15000 {
 				newVal = 0x04 // red
 			}
-			newVal = 0x04 // all should be red...
 
 			if i%2 == 0 {
 				val[i/2] = newVal << 4
