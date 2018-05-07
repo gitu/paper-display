@@ -6,7 +6,6 @@ import (
 	"log"
 	"image"
 	"errors"
-	"encoding/hex"
 )
 
 type Command int
@@ -126,7 +125,6 @@ func (e *Display) DisplayImage(img image.Image) error {
 			i++
 		}
 	}
-	log.Println(hex.Dump(val))
 	//e.SendData(val...)
 	e.SendCommand(DISPLAY_REFRESH)
 	time.Sleep(100 * time.Millisecond)
