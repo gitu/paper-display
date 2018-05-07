@@ -1,7 +1,7 @@
 #!/bin/bash
 
 GOPATH="/home/pi/go/"
-EXPORT GOPATH
+export GOPATH
 
 go get -u github.com/gitu/paper-display
 

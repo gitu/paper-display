@@ -4,7 +4,7 @@ After=multi-user.target
 
 [Service]
 Type=idle
-ExecStart=/home/pi/go/github.com/gitu/paper-display/init.sh > /home/pi/paper.log 2>&1
+ExecStart=/home/pi/go/src/github.com/gitu/paper-display/init.sh > /home/pi/paper.log 2>&1
 
 [Install]
 WantedBy=multi-user.target
