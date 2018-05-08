@@ -63,3 +63,4 @@ var epd75b = &Display{
 func Epd75b() (*Display) {
 	return epd75b
 }
+

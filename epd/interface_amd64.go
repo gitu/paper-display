@@ -31,7 +31,7 @@ func writeCmd(cmd byte) {
 }
 
 func writeData(data ...byte) {
-	glog.Infoln("Dummy : WriteData..")
+//	glog.Infoln("Dummy : WriteData..")
 }
 
 // ### END OF FILE ###

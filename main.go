@@ -2,47 +2,58 @@ package main
 
 import (
 	"net/http"
-	"fmt"
 	"golang.org/x/image/bmp"
 	"github.com/gitu/paper-display/epd"
 	"time"
 	"image"
+	"github.com/golang/glog"
+	"flag"
 )
 
+var url = flag.String("url", "https://paper-display.herokuapp.com/clock", "url to fetch")
+
 func main() {
+	flag.Parse()
+
 	epd.InitHW()
 	display := epd.Epd75b()
 	display.Init(display)
 
-	url := "https://paper-display.herokuapp.com/clock"
-
 	previous := image.Image(image.NewRGBA(image.Rect(0, 0, 1, 1)))
 	for {
-		response, err := http.Get(url)
-		if err != nil {
-			fmt.Println("Error while downloading", url, "-", err)
-			return
-		}
-		defer response.Body.Close()
-
-		image, err := bmp.Decode(response.Body)
-		if err != nil {
-			fmt.Println("Error while parsing", url, "-", err)
-			return
-		}
-
-		if !sameImage(previous, image) {
-			fmt.Println("new Image")
-			previous = image
-			display.DisplayImage(image)
+		img := fetchImage(*url)
+		if img == nil {
+			glog.Info("no image - skip update")
+		} else if !sameImage(previous, img) {
+			glog.Info("new Image")
+			previous = img
+			display.Init(display)
+			display.DisplayImage(img)
+			display.Sleep()
 		} else {
-			fmt.Println("same image - skip update")
+			glog.Info("same image - skip update")
 		}
 
 		time.Sleep(5 * time.Second)
 	}
 }
+func fetchImage(url string) image.Image {
+	response, err := http.Get(url)
+	if err != nil {
+		glog.Error("Error while downloading", url, "-", err)
+		return nil
+	}
+	defer response.Body.Close()
+
+	img, err := bmp.Decode(response.Body)
+	if err != nil {
+		glog.Error("Error while parsing", url, "-", err)
+		return nil
+	}
+	return img
+}
 func sameImage(i1 image.Image, i2 image.Image) bool {
+
 	if i1.Bounds() != i2.Bounds() {
 		return false
 	}

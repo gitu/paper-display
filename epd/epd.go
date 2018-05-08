@@ -131,3 +131,9 @@ func (e *Display) DisplayImage(img image.Image) error {
 	e.Wait()
 	return nil
 }
+
+func (e *Display) Sleep() {
+	e.SendCommand(POWER_OFF)
+	e.Wait()
+	e.CallFunction(DEEP_SLEEP, 0xa5)
+}
