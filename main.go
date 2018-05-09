@@ -1,16 +1,28 @@
 package main
 
 import (
-	"net/http"
-	"golang.org/x/image/bmp"
-	"github.com/gitu/paper-display/epd"
-	"time"
-	"image"
-	"github.com/golang/glog"
 	"flag"
+	"fmt"
+	"github.com/denisbrodbeck/machineid"
+	"github.com/gitu/paper-display/epd"
+	"github.com/golang/glog"
+	"golang.org/x/image/bmp"
+	"image"
+	"net/http"
+	"time"
 )
 
-var url = flag.String("url", "https://paper-display.herokuapp.com/clock", "url to fetch")
+var url = flag.String("url", "https://paper-display.herokuapp.com/clock?display="+getMid(), "url to fetch")
+
+func getMid() string {
+	mid, err := machineid.ProtectedID("paper-display")
+	if err != nil {
+		fmt.Println("Error while getting machine id ", err)
+	} else {
+		fmt.Println("MachineId", mid)
+	}
+	return mid
+}
 
 func main() {
 	flag.Parse()

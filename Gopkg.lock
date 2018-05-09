@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "github.com/denisbrodbeck/machineid"
+  packages = ["."]
+  revision = "2777226d0340d8da18b49993ce2b4aeb9c1c6929"
+  version = "v0.8.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/golang/glog"
   packages = ["."]
@@ -26,9 +32,18 @@
   packages = ["bmp"]
   revision = "f315e440302883054d0c2bd85486878cb4f8572c"
 
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sys"
+  packages = [
+    "windows",
+    "windows/registry"
+  ]
+  revision = "7db1c3b1a98089d0071c84f646ff5c96aad43682"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "70b9e2cc654557b9a937f8beb5915fe5a88d50d14a2823cb4decb22e926e7109"
+  inputs-digest = "87a97e8ac80a63d0592b7ed9e6ef0ed68f559a3f9a67f243ce1c8e8b02d6f9fc"
   solver-name = "gps-cdcl"
   solver-version = 1
