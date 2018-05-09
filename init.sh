@@ -1,8 +1,10 @@
 #!/bin/bash
 
-GOPATH="/home/pi/go/"
-export GOPATH
+set -e
+
+export GOPATH=/home/pi/go/
+export PATH=/usr/local/go/bin:$PATH:$GOPATH/bin
 
 go get -u github.com/gitu/paper-display
 
-/home/pi/go/bin/paper-display
+paper-display
